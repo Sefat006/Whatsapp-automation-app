@@ -33,6 +33,18 @@
         .modal-stats { text-align: left; margin: 16px 0; font-size: 14px; }
         .modal-stats div { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #eee; }
         .modal-box button { margin-top: 10px; }
+
+        .warning-box {
+            background: #fff8e6;
+            border-left: 4px solid #f59e0b;
+            padding: 12px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #78350f;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+        .warning-box b { color: #92400e; }
     </style>
 </head>
 <body>
@@ -46,6 +58,10 @@
     </div>
 
     <div id="form-container" style="display:none;">
+        <div class="warning-box">
+            ⚠️ <b>Anti-Ban Advisory:</b> To protect your WhatsApp account from temporary or permanent ban, keep daily sending to <b>&le; 35 messages/day</b>. Do <b>NOT</b> send more than <b>50 messages/day</b>.
+        </div>
+
         <label>Mobile Numbers (Comma separated with Country Code):</label>
         <textarea id="numbers" rows="4" placeholder="8801700000000, 8801800000000"></textarea>
 
@@ -211,6 +227,15 @@
         if (!numbers.trim() || !message.trim()) {
             alert('Please fill in both numbers and message.');
             return;
+        }
+
+        const count = [...new Set(numbers.split(',').map(n => n.trim()).filter(Boolean))].length;
+        if (count > 50) {
+            const proceed = confirm(`⚠️ WARNING: You are about to send to ${count} numbers!\n\nSending more than 50 messages/day significantly increases the risk of your WhatsApp number being BANNED.\n\nRecommended safe limit is ≤ 35 messages/day.\n\nDo you really want to proceed?`);
+            if (!proceed) return;
+        } else if (count > 35) {
+            const proceed = confirm(`ℹ️ ADVISORY: You are sending to ${count} numbers, which exceeds the recommended daily safe limit of 35 messages/day (Maximum limit is 50).\n\nDo you want to proceed?`);
+            if (!proceed) return;
         }
 
         const res = await fetch('/send-bulk', {
