@@ -21,3 +21,6 @@ yarn-error.log*
 Thumbs.db
 .vscode/
 .idea/
+
+# Local screenshots & temp images
+error.png
